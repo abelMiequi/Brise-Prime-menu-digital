@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>O Livro de Delícia | Brisa Prime</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ember:   #FF4500;
+  --flame:   #FF7A00;
+  --gold:    #C9A84C;
+  --coal:    #0D0000;
+  --ash:     rgba(240,220,200,0.85);
+  --smoke:   rgba(255,255,255,0.05);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:var(--coal);
+  color:var(--ash);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ── CURSOR ── */
+#cur,#cur-ring{position:fixed;pointer-events:none;z-index:99999;border-radius:50%;transform:translate(-50%,-50%);}
+#cur{width:10px;height:10px;background:var(--ember);box-shadow:0 0 10px var(--ember);transition:transform .12s;}
+#cur-ring{width:34px;height:34px;border:1px solid rgba(255,69,0,.5);transition:width .25s,height .25s;}
+
+/* ── SPLASH ── */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  background:#000;
+  animation:splashFade .7s ease-in forwards 4.6s;
+}
+#splash canvas{position:absolute;inset:0;}
+.splash-inner{position:relative;z-index:2;text-align:center;}
+.splash-logo{
+  font-size:clamp(3.2rem,9vw,6.5rem);
+  font-weight:800;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  background:linear-gradient(160deg,#fff 10%,var(--gold) 45%,var(--ember) 80%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 28px rgba(255,69,0,.9));
+  animation:logoIn 1s cubic-bezier(.22,1,.36,1) forwards .6s;
+  opacity:0;transform:translateY(24px);
+}
+.splash-line{width:0;height:1px;background:var(--gold);margin:14px auto;animation:lineGrow .8s ease forwards 1.4s;}
+.splash-sub{
+  font-size:.65rem;font-weight:300;letter-spacing:.55em;
+  color:rgba(255,255,255,.35);text-transform:uppercase;
+  opacity:0;animation:fadeIn .8s forwards 1.6s;
+}
+@keyframes splashFade{to{opacity:0;visibility:hidden;}}
+@keyframes logoIn{to{opacity:1;transform:none;}}
+@keyframes lineGrow{to{width:70px;}}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* ── HERO ── */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+  text-align:center;
+  padding-bottom:120px;
+  overflow:hidden;
+}
+#heroFire{position:absolute;inset:0;width:100%;height:100%;}
+
+/* ember glow layers */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% 100%, rgba(180,20,0,.85) 0%,  transparent 65%),
+    radial-gradient(ellipse 60% 35% at 50% 100%, rgba(255,80,0,.5)  0%,  transparent 50%);
+  z-index:1;pointer-events:none;
+}
+/* top darkness */
+.hero::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:45%;
+  background:linear-gradient(to bottom,#000 0%,transparent 100%);
+  z-index:1;pointer-events:none;
+}
+
+.hero-content{position:relative;z-index:2;padding:0 20px;}
+.hero-eyebrow{
+  font-size:.6rem;font-weight:400;letter-spacing:.55em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:18px;
+  opacity:0;animation:fadeIn .9s forwards 5.2s;
+}
+.hero h1{
+  font-size:clamp(3.5rem,11vw,8.5rem);
+  font-weight:900;line-height:.88;letter-spacing:-.02em;
+  text-transform:uppercase;margin-bottom:22px;
+  opacity:0;animation:fadeIn .9s forwards 5.4s;
+}
+.hero h1 span{
+  display:block;font-style:italic;font-weight:300;
+  font-size:clamp(2rem,6vw,5rem);
+  letter-spacing:.05em;text-transform:none;
+  color:rgba(255,200,120,.9);
+}
+.hero-desc{
+  font-size:clamp(.9rem,1.4vw,1.05rem);font-weight:300;
+  color:rgba(240,220,200,.55);max-width:440px;line-height:1.75;
+  opacity:0;animation:fadeIn .9s forwards 5.6s;
+}
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;animation:fadeIn 1s forwards 6.2s;
+}
+.scroll-hint span{font-size:.55rem;font-weight:300;letter-spacing:.4em;color:rgba(255,255,255,.3);text-transform:uppercase;}
+.scroll-bar{width:1px;height:48px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollPulse 2s ease-in-out infinite;}
+@keyframes scrollPulse{0%,100%{transform:scaleY(1);opacity:.5;}50%{transform:scaleY(1.4);opacity:1;}}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:500;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 40px;
+  background:rgba(8,0,0,.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(201,168,76,.12);
+}
+.nav-brand{font-size:.95rem;font-weight:700;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap;}
+.nav-links a{
+  color:rgba(240,220,200,.55);text-decoration:none;
+  padding:7px 16px;border-radius:30px;
+  font-size:.62rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid transparent;transition:all .3s;
+}
+.nav-links a:hover{
+  color:#fff;border-color:rgba(255,69,0,.4);
+  background:rgba(255,69,0,.08);box-shadow:0 0 18px rgba(255,69,0,.2);
+}
+
+/* ── SECTION ── */
+.section{padding:90px 40px;max-width:1280px;margin:0 auto;}
+.s-head{display:flex;align-items:baseline;gap:20px;margin-bottom:54px;}
+.s-num{font-size:.6rem;font-weight:600;letter-spacing:.25em;color:var(--ember);}
+.s-head h2{
+  font-size:clamp(2rem,4vw,3.2rem);font-weight:800;
+  letter-spacing:-.02em;position:relative;
+}
+.s-head h2::after{
+  content:'';position:absolute;bottom:-8px;left:0;
+  width:44px;height:2px;background:var(--gold);
+}
+.s-line{flex:1;height:1px;background:linear-gradient(to right,rgba(201,168,76,.25),transparent);margin-left:8px;}
+.bg-ember{
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 100%, rgba(120,10,0,.18) 0%, transparent 70%),
+    linear-gradient(180deg,transparent,rgba(80,5,0,.12),transparent);
+}
+
+/* ── GRID / CARDS ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px;}
+.card{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(201,168,76,.1);
+  border-radius:3px;overflow:hidden;
+  transition:transform .45s cubic-bezier(.23,1,.32,1),border-color .45s,box-shadow .45s;
+  position:relative;
+}
+.card::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(255,69,0,.05) 0%,transparent 60%);
+  opacity:0;transition:opacity .4s;
+}
+.card:hover{
+  transform:translateY(-10px) scale(1.015);
+  border-color:rgba(201,168,76,.28);
+  box-shadow:0 20px 55px rgba(0,0,0,.65),0 0 35px rgba(255,69,0,.12);
+}
+.card:hover::after{opacity:1;}
+.card-img-wrap{overflow:hidden;}
+.card img{
+  width:100%;height:215px;object-fit:cover;display:block;
+  filter:brightness(.78) saturate(.85);
+  transition:filter .5s,transform .55s;
+}
+.card:hover img{filter:brightness(.92) saturate(1.1);transform:scale(1.06);}
+.card-body{padding:22px 18px 18px;}
+.card-tag{font-size:.58rem;font-weight:600;letter-spacing:.3em;color:var(--ember);text-transform:uppercase;margin-bottom:7px;}
+.card-body h3{font-size:1.3rem;font-weight:700;margin-bottom:7px;line-height:1.2;}
+.card-body p{font-size:.88rem;font-weight:300;color:rgba(240,220,200,.48);line-height:1.65;}
+.card-price{font-size:.75rem;font-weight:600;color:var(--gold);margin-top:13px;letter-spacing:.05em;}
+
+/* FEATURED double card */
+.card.feat{grid-column:span 2;display:grid;grid-template-columns:1.3fr 1fr;}
+.card.feat .card-img-wrap{height:100%;}
+.card.feat img{height:100%;min-height:250px;}
+.card.feat .card-body{padding:40px 30px;display:flex;flex-direction:column;justify-content:center;}
+.card.feat h3{font-size:1.9rem;}
+
+/* ── QUOTE ── */
+.quote-belt{
+  text-align:center;padding:90px 30px;
+  background:linear-gradient(180deg,transparent,rgba(120,10,0,.18),transparent);
+  border-top:1px solid rgba(201,168,76,.07);
+  border-bottom:1px solid rgba(201,168,76,.07);
+}
+.quote-belt blockquote{
+  font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:300;font-style:italic;
+  color:rgba(240,220,200,.65);max-width:680px;margin:0 auto 16px;line-height:1.5;
+}
+.quote-belt blockquote strong{color:var(--gold);font-style:normal;font-weight:700;}
+.q-attr{font-size:.6rem;font-weight:500;letter-spacing:.35em;color:var(--ember);text-transform:uppercase;}
+
+/* ── OFERTAS ── */
+.oferta{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px;
+  border:1px solid rgba(255,69,0,.18);border-radius:3px;padding:28px 32px;
+  background:linear-gradient(135deg,rgba(100,5,0,.22),rgba(255,69,0,.05));
+  margin-bottom:14px;transition:all .35s;
+}
+.oferta:hover{border-color:rgba(255,69,0,.45);transform:translateX(8px);}
+.oferta h3{font-size:1.4rem;font-weight:700;margin-bottom:5px;}
+.oferta p{font-size:.85rem;font-weight:300;color:rgba(240,220,200,.45);}
+.oferta-badge{
+  font-size:.65rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ember);background:rgba(255,69,0,.09);
+  border:1px solid rgba(255,69,0,.3);padding:9px 20px;border-radius:2px;white-space:nowrap;
+}
+
+/* ── FOOTER ── */
+footer{
+  max-width:1280px;margin:0 auto;
+  padding:80px 40px 44px;
+  display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:50px;
+  border-top:1px solid rgba(201,168,76,.12);
+}
+.f-brand .name{font-size:1.7rem;font-weight:800;letter-spacing:.12em;color:var(--gold);margin-bottom:12px;}
+.f-brand p{font-size:.88rem;font-weight:300;color:rgba(240,220,200,.38);line-height:1.75;}
+footer h4{font-size:.6rem;font-weight:600;letter-spacing:.3em;color:var(--ember);text-transform:uppercase;margin-bottom:18px;}
+footer p,footer a{display:block;font-size:.9rem;font-weight:300;color:rgba(240,220,200,.45);text-decoration:none;margin-bottom:8px;transition:color .2s;}
+footer a:hover{color:var(--gold);}
+.f-bottom{
+  grid-column:1/-1;text-align:center;padding-top:36px;
+  border-top:1px solid rgba(255,255,255,.04);
+  font-size:.58rem;font-weight:400;letter-spacing:.22em;
+  color:rgba(255,255,255,.18);text-transform:uppercase;
+}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.vis{opacity:1;transform:none;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:780px){
+  nav{padding:12px 18px;}
+  .nav-brand{display:none;}
+  .section{padding:60px 18px;}
+  .card.feat{grid-column:span 1;grid-template-columns:1fr;}
+  .card.feat img{min-height:200px;}
+  footer{grid-template-columns:1fr;gap:28px;padding:50px 18px 36px;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <canvas id="splashFire"></canvas>
+  <div class="splash-inner">
+    <div class="splash-logo">Brisa Prime</div>
+    <div class="splash-line"></div>
+    <div class="splash-sub">O Livro de Delícia</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="heroFire"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Luanda, Angola · Est. 2026</div>
+    <h1>Brisa<span>de Delícia</span>Prime</h1>
+    <p class="hero-desc">Onde o fogo transforma ingredientes em memórias. Uma experiência de brasa pensada para os seus sentidos.</p>
+  </div>
+  <div class="scroll-hint">
+    <span>Explorar</span>
+    <div class="scroll-bar"></div>
+  </div>
+</section>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Brisa Prime</div>
+  <div class="nav-links">
+    <a href="#grelhados">Grelhados</a>
+    <a href="#bebidas">Bebidas</a>
+    <a href="#pratos">Pratos do Dia</a>
+    <a href="#ofertas">Ofertas</a>
+    <a href="#destaques">Destaques</a>
+  </div>
+</nav>
+
+<!-- GRELHADOS -->
+<section id="grelhados" class="section">
+  <div class="s-head">
+    <span class="s-num">01</span>
+    <h2>Grelhados</h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="grid">
+    <div class="card feat reveal">
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=700&q=80" alt="Frango Grelhado">
+      </div>
+      <div class="card-body">
+        <div class="card-tag">Especialidade</div>
+        <h3>Frango Grelhado da Casa</h3>
+        <p>Marinado 24 horas em especiarias selecionadas. Servido com acompanhamento à escolha e molho especial da casa.</p>
+        <div class="card-price">A partir de Kz 3.500</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1558030006-450675393462?w=500&q=80" alt="Costelas"></div>
+      <div class="card-body">
+        <div class="card-tag">Clássico</div>
+        <h3>Costelas na Brasa</h3>
+        <p>Lentamente grelhadas com molho barbecue artesanal da casa.</p>
+        <div class="card-price">Kz 5.200</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=500&q=80" alt="Peixe"></div>
+      <div class="card-body">
+        <div class="card-tag">Do Mar</div>
+        <h3>Peixe Fresco Grelhado</h3>
+        <p>Fresquíssimo, grelhado na hora com limão e ervas aromáticas.</p>
+        <div class="card-price">Kz 4.800</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-belt reveal">
+  <blockquote>"A boa mesa não é luxo — é a <strong>linguagem universal</strong> do cuidado."</blockquote>
+  <div class="q-attr">— Brisa Prime, Luanda</div>
+</div>
+
+<!-- BEBIDAS -->
+<section id="bebidas" class="section bg-ember">
+  <div class="s-head">
+    <span class="s-num">02</span>
+    <h2>Bebidas</h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="grid">
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=500&q=80" alt="Sumo"></div>
+      <div class="card-body">
+        <div class="card-tag">Natural</div>
+        <h3>Sumo da Época</h3>
+        <p>Preparado na hora com frutas tropicais frescas selecionadas diariamente.</p>
+        <div class="card-price">Kz 800</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=500&q=80" alt="Cocktail"></div>
+      <div class="card-body">
+        <div class="card-tag">Signature</div>
+        <h3>Cocktail Brisa</h3>
+        <p>A nossa criação exclusiva — cítrico, refrescante e memorável.</p>
+        <div class="card-price">Kz 1.500</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1497534446932-c925b458314e?w=500&q=80" alt="Água"></div>
+      <div class="card-body">
+        <div class="card-tag">Premium</div>
+        <h3>Água com Essência</h3>
+        <p>Infusão de pepino e hortelã. Elegante e refrescante.</p>
+        <div class="card-price">Kz 600</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRATOS DO DIA -->
+<section id="pratos" class="section">
+  <div class="s-head">
+    <span class="s-num">03</span>
+    <h2>Pratos do Dia</h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="grid">
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&q=80" alt="Especial"></div>
+      <div class="card-body">
+        <div class="card-tag">Hoje</div>
+        <h3>Especial da Casa</h3>
+        <p>Preparado diariamente pelo nosso chef com ingredientes locais da época.</p>
+        <div class="card-price">Consulte o serviço</div>
+      </div>
+    </div>
+    <div class="card feat reveal">
+      <div class="card-img-wrap">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&q=80" alt="Chef">
+      </div>
+      <div class="card-body">
+        <div class="card-tag">Chef's Choice</div>
+        <h3>Prato do Chef</h3>
+        <p>Uma seleção diária que surpreende o paladar. Técnicas contemporâneas com sabores da culinária angolana.</p>
+        <div class="card-price">Kz 6.500</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OFERTAS -->
+<section id="ofertas" class="section bg-ember">
+  <div class="s-head">
+    <span class="s-num">04</span>
+    <h2>Ofertas Semanais</h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="oferta reveal">
+    <div><h3>Combo Familiar</h3><p>1 Frango inteiro · 4 acompanhamentos · 4 sumos naturais</p></div>
+    <div class="oferta-badge">Poupança de 20%</div>
+  </div>
+  <div class="oferta reveal">
+    <div><h3>Almoço Executivo</h3><p>Prato do dia · Bebida · Sobremesa — Segunda a Sexta</p></div>
+    <div class="oferta-badge">Kz 3.200</div>
+  </div>
+  <div class="oferta reveal">
+    <div><h3>Happy Hour</h3><p>Bebidas com 30% de desconto — todos os dias das 17h às 19h</p></div>
+    <div class="oferta-badge">Diário</div>
+  </div>
+</section>
+
+<!-- DESTAQUES -->
+<section id="destaques" class="section">
+  <div class="s-head">
+    <span class="s-num">05</span>
+    <h2>Destaques</h2>
+    <div class="s-line"></div>
+  </div>
+  <div class="grid">
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=500&q=80" alt="Combo"></div>
+      <div class="card-body">
+        <div class="card-tag">Mais Pedido</div>
+        <h3>Combo Duo</h3>
+        <p>Para duas pessoas — grelhado, acompanhamentos e bebidas à escolha.</p>
+        <div class="card-price">Kz 7.800</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80" alt="Mesa"></div>
+      <div class="card-body">
+        <div class="card-tag">Experiência</div>
+        <h3>Mesa Reservada</h3>
+        <p>Reserve a sua mesa e ganhe uma entrada de boas-vindas da casa.</p>
+        <div class="card-price">Reservas: +244 XXX XXX</div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="card-img-wrap"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80" alt="Entradas"></div>
+      <div class="card-body">
+        <div class="card-tag">Para Começar</div>
+        <h3>Entradas Variadas</h3>
+        <p>Uma seleção de petiscos para começar a delícia da melhor forma.</p>
+        <div class="card-price">A partir de Kz 1.200</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-brand">
+    <div class="name">Brisa Prime</div>
+    <p>Uma experiência gastronómica única no coração de Luanda. Sabores autênticos, ambiente de brasa.</p>
+  </div>
+  <div>
+    <h4>Contacto</h4>
+    <p>📞 +244 XXX XXX XXX</p>
+    <p>📍 Luanda, Angola</p>
+    <p>✉ info@brisaprime.ao</p>
+  </div>
+  <div>
+    <h4>Redes Sociais</h4>
+    <a href="#">Facebook</a>
+    <a href="#">Instagram</a>
+    <a href="#">TikTok</a>
+    <a href="#">WhatsApp</a>
+  </div>
+  <div class="f-bottom">© 2026 Brisa Prime · Luanda, Angola · Todos os direitos reservados</div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════
+   REAL FIRE SYSTEM
+   Multi-layer: coal bed → flame core → tips → smoke → embers
+   ══════════════════════════════════════════ */
+
+function RealFire(canvas, opts = {}) {
+  const W = () => canvas.width;
+  const H = () => canvas.height;
+  const ctx = canvas.getContext('2d');
+  const isSplash = opts.splash || false;
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // ── COAL BED PARTICLES (base glow, slow drift) ──
+  const coals = Array.from({ length: isSplash ? 80 : 60 }, () => resetCoal({}));
+  function resetCoal(p) {
+    p.x = Math.random() * 1.2 - 0.1; // 0..1 normalised
+    p.y = 1 - Math.random() * 0.08;
+    p.r = Math.random() * (isSplash ? 5 : 4) + 2;
+    p.brightness = Math.random();
+    p.speed = Math.random() * 0.0002 + 0.0001;
+    p.phase = Math.random() * Math.PI * 2;
+    return p;
+  }
+
+  // ── FLAME PARTICLES ──
+  const FLAME_COUNT = isSplash ? 420 : 380;
+  const flames = Array.from({ length: FLAME_COUNT }, () => resetFlame({}));
+
+  function resetFlame(p) {
+    // Spawn along bottom, clustered at several "burner" points
+    const burners = isSplash ? [.2, .35, .5, .65, .8] : [.15, .28, .42, .55, .68, .82];
+    const b = burners[Math.floor(Math.random() * burners.length)];
+    p.x = (b + (Math.random() - .5) * .18);
+    p.y = 1.02;
+    p.vx = (Math.random() - .5) * .0018;
+    p.vy = -(Math.random() * .006 + .003);
+    p.life = 0;
+    p.maxLife = Math.random() * .55 + .3;
+    p.r0 = Math.random() * (isSplash ? 28 : 22) + 10;
+    p.layer = Math.floor(Math.random() * 3); // 0=inner,1=mid,2=tip
+    p.wobble = Math.random() * Math.PI * 2;
+    p.wobbleSpeed = Math.random() * .08 + .03;
+    p.turbulence = Math.random() * .003;
+    return p;
+  }
+
+  // ── EMBER SPARKS ──
+  const SPARK_COUNT = isSplash ? 90 : 70;
+  const sparks = Array.from({ length: SPARK_COUNT }, () => resetSpark({}));
+
+  function resetSpark(p) {
+    p.x = .3 + Math.random() * .4;
+    p.y = .85 + Math.random() * .12;
+    p.vx = (Math.random() - .5) * .004;
+    p.vy = -(Math.random() * .012 + .005);
+    p.life = 0;
+    p.maxLife = Math.random() * .6 + .2;
+    p.r = Math.random() * 2.5 + .8;
+    p.trail = [];
+    return p;
+  }
+
+  // ── SMOKE PARTICLES ──
+  const smokes = isSplash ? [] : Array.from({ length: 30 }, () => resetSmoke({}));
+  function resetSmoke(p) {
+    p.x = .25 + Math.random() * .5;
+    p.y = .4 + Math.random() * .2;
+    p.vx = (Math.random() - .5) * .0008;
+    p.vy = -(Math.random() * .0015 + .0005);
+    p.life = 0;
+    p.maxLife = Math.random() * .8 + .5;
+    p.r = Math.random() * 60 + 30;
+    return p;
+  }
+
+  let frame = 0;
+  let running = true;
+
+  function draw() {
+    if (!running) return;
+    frame++;
+    ctx.clearRect(0, 0, W(), H());
+
+    const w = W(), h = H();
+
+    // ── 1. COAL BED ──
+    coals.forEach(p => {
+      const px = p.x * w;
+      const py = p.y * h;
+      const pulse = .5 + .5 * Math.sin(frame * p.speed * 60 + p.phase);
+      const br = .4 + .6 * pulse * p.brightness;
+      const g = ctx.createRadialGradient(px, py, 0, px, py, p.r * (1.5 + pulse));
+      g.addColorStop(0, `rgba(255,${120 + Math.floor(80 * pulse)},0,${br})`);
+      g.addColorStop(.5, `rgba(200,40,0,${br * .5})`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(px, py, p.r * (2 + pulse), 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // ── 2. FLAME PARTICLES ──
+    flames.forEach(p => {
+      p.life += .016;
+      if (p.life > p.maxLife) { resetFlame(p); return; }
+
+      const t = p.life / p.maxLife; // 0..1 life progress
+      p.wobble += p.wobbleSpeed;
+      p.x += p.vx + Math.sin(p.wobble) * p.turbulence;
+      p.y += p.vy;
+
+      const px = p.x * w;
+      const py = p.y * h;
+
+      // Flame narrows and rises: radius shrinks with height
+      const rScale = 1 - t * .7;
+      const r = p.r0 * rScale;
+
+      let c0, c1, c2, alpha;
+
+      if (p.layer === 0) {
+        // Inner core: white-yellow → yellow → orange
+        const fade = t < .15 ? t / .15 : 1 - (t - .15) / .85;
+        alpha = fade * .75;
+        c0 = `rgba(255,255,200,${alpha})`;
+        c1 = `rgba(255,200,30,${alpha * .8})`;
+        c2 = `rgba(255,80,0,0)`;
+      } else if (p.layer === 1) {
+        // Mid flame: orange → deep red
+        const fade = t < .1 ? t / .1 : 1 - (t - .1) / .9;
+        alpha = fade * .65;
+        c0 = `rgba(255,160,0,${alpha})`;
+        c1 = `rgba(255,60,0,${alpha * .7})`;
+        c2 = `rgba(180,10,0,0)`;
+      } else {
+        // Tips: red → dark transparent
+        const fade = t < .05 ? t / .05 : 1 - (t - .05) / .95;
+        alpha = fade * .45;
+        c0 = `rgba(255,90,0,${alpha})`;
+        c1 = `rgba(160,10,0,${alpha * .5})`;
+        c2 = `rgba(80,0,0,0)`;
+      }
+
+      const g = ctx.createRadialGradient(px, py, 0, px, py + r * .3, r);
+      g.addColorStop(0, c0);
+      g.addColorStop(.45, c1);
+      g.addColorStop(1, c2);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      // Elongated ellipse — taller than wide for flame shape
+      ctx.ellipse(px, py, r * .55, r, 0, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // ── 3. HEAT DISTORTION SHIMMER (overlay glow) ──
+    const hg = ctx.createLinearGradient(0, h * .6, 0, h);
+    hg.addColorStop(0, 'rgba(255,40,0,0)');
+    hg.addColorStop(.7, `rgba(200,20,0,${.04 + .02 * Math.sin(frame * .05)})`);
+    hg.addColorStop(1, `rgba(255,60,0,${.12 + .04 * Math.sin(frame * .07)})`);
+    ctx.fillStyle = hg;
+    ctx.fillRect(0, 0, w, h);
+
+    // ── 4. EMBER SPARKS ──
+    sparks.forEach(p => {
+      p.life += .014;
+      if (p.life > p.maxLife) { resetSpark(p); return; }
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy *= .995; // mild drag
+
+      const px = p.x * w, py = p.y * h;
+      p.trail.push({ x: px, y: py });
+      if (p.trail.length > 8) p.trail.shift();
+
+      const t = p.life / p.maxLife;
+      const alpha = t < .2 ? t / .2 : 1 - (t - .2) / .8;
+
+      // Trail
+      if (p.trail.length > 1) {
+        for (let i = 1; i < p.trail.length; i++) {
+          const a = (i / p.trail.length) * alpha * .6;
+          ctx.strokeStyle = `rgba(255,${150 + Math.floor(80 * (i / p.trail.length))},0,${a})`;
+          ctx.lineWidth = p.r * (i / p.trail.length) * .8;
+          ctx.beginPath();
+          ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
+          ctx.lineTo(p.trail[i].x, p.trail[i].y);
+          ctx.stroke();
+        }
+      }
+
+      // Spark head
+      ctx.fillStyle = `rgba(255,${200 + Math.floor(55 * Math.random())},${Math.floor(60 * Math.random())},${alpha})`;
+      ctx.beginPath();
+      ctx.arc(px, py, p.r * (1 - t * .5), 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // ── 5. SMOKE (hero only) ──
+    smokes.forEach(p => {
+      p.life += .008;
+      if (p.life > p.maxLife) { resetSmoke(p); return; }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      const px = p.x * w, py = p.y * h;
+      const t = p.life / p.maxLife;
+      const alpha = Math.sin(t * Math.PI) * .055;
+      const r = p.r * (1 + t * 1.5);
+
+      const sg = ctx.createRadialGradient(px, py, 0, px, py, r);
+      sg.addColorStop(0, `rgba(80,40,20,${alpha})`);
+      sg.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = sg;
+      ctx.beginPath();
+      ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+  return { stop: () => { running = false; } };
+}
+
+// ── BOOT SPLASH FIRE ──
+const splashCanvas = document.getElementById('splashFire');
+splashCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+const splashFire = RealFire(splashCanvas, { splash: true });
+setTimeout(() => splashFire.stop(), 5400);
+
+// ── BOOT HERO FIRE ──
+const heroCanvas = document.getElementById('heroFire');
+heroCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+RealFire(heroCanvas);
+
+// ── CURSOR ──
+const cur = document.getElementById('cur');
+const curRing = document.getElementById('cur-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+});
+(function animRing() {
+  rx += (mx - rx) * .1; ry += (my - ry) * .1;
+  curRing.style.left = rx + 'px'; curRing.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,.card,.oferta').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cur.style.transform = 'translate(-50%,-50%) scale(2.2)';
+    curRing.style.width = '56px'; curRing.style.height = '56px';
+  });
+  el.addEventListener('mouseleave', () => {
+    cur.style.transform = 'translate(-50%,-50%) scale(1)';
+    curRing.style.width = '34px'; curRing.style.height = '34px';
+  });
+});
+
+// ── SCROLL REVEAL ──
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('vis'), i * 70);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: .1 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
